@@ -59,8 +59,12 @@ public class Anneke extends LinearOpMode {
         while (opModeIsActive()) {
             if (runtime.milliseconds() > 3000) {
                 aruShahPjs.setPower(0);
+                telemetry.addData("Status: ", "notRun");
+                telemetry.update();
             } else {
                 aruShahPjs.setPower(1);
+                telemetry.addData("Status: ", "stillRunning");
+                telemetry.update();
             }
 
             // Setup a variable for each drive wheel to save power level for telemetry
