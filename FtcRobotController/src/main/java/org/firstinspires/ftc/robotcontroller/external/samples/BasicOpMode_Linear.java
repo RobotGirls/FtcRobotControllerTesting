@@ -29,6 +29,9 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -63,14 +66,24 @@ public class BasicOpMode_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("ticks",0);
         telemetry.update();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
+        double ticks;
+
+
         leftDrive  = hardwareMap.get(DcMotor.class, "leftMotor");
         rightDrive = hardwareMap.get(DcMotor.class, "rightMotor");
         ballerina_capucina = hardwareMap.get(DcMotor.class,"liftMotor");
+        //Encoder ticks are at 0
+        rightDrive.setMode(STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(RUN_USING_ENCODER);
+
+
+
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -83,15 +96,18 @@ public class BasicOpMode_Linear extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
+        // run until the end of the match (driver presses STOP) 
         while (opModeIsActive()) {
+            ticks=rightDrive.getCurrentPosition();
+            telemetry.addData("ticks",ticks);
+            telemetry.update();
             if(runtime.milliseconds() > 3000) {
-                ballerina_capucina.setPower(0);
+                rightDrive.setPower(0);
                 telemetry.addData("Status", "notRun");
                 telemetry.update();
             }
             else{
-                ballerina_capucina.setPower(1);
+                rightDrive.setPower(1);
                 telemetry.addData("Status", "Run");
                 telemetry.update();
             }
