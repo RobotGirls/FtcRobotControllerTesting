@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,9 +24,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Anneke's Basic Linear OpMode", group="Linear OpMode")
+@TeleOp(name="Anneke's Encoder :) ", group="Linear OpMode")
 // @Disabled
-public class Anneke extends LinearOpMode {
+public class EncoderTest extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -33,8 +35,11 @@ public class Anneke extends LinearOpMode {
     private DcMotor aruShahPjs = null;
 
 
+
     @Override
     public void runOpMode() {
+        double encoderValue;
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -45,11 +50,15 @@ public class Anneke extends LinearOpMode {
         rightDrive = hardwareMap.get(DcMotor.class, "rightMotor");
         aruShahPjs = hardwareMap.get(DcMotor.class,"liftMotor");
 
+
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+
+         rightDrive.setMode(STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(RUN_USING_ENCODER);
 
         // Wait for the game to start (driver presses START)
         waitForStart();
@@ -58,14 +67,16 @@ public class Anneke extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             if (runtime.milliseconds() > 1000) {
-                aruShahPjs.setPower(0);
+                rightDrive.setPower(0);
                 telemetry.addData("Status: ", "notRun");
                 telemetry.update();
             } else {
-                aruShahPjs.setPower(1);
+                rightDrive.setPower(1);
                 telemetry.addData("Status: ", "stillRunning");
                 telemetry.update();
             }
+
+            encoderValue = rightDrive.getCurrentPosition();
 
             // Setup a variable for each drive wheel to save power level for telemetry
             double leftPower;
@@ -93,7 +104,8 @@ public class Anneke extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.update();
+            telemetry.addData("Encoder Value", "right motor (%.2f)",encoderValue);
+           telemetry.update();
         }
     }
 }
